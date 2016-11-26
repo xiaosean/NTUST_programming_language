@@ -74,12 +74,6 @@ public abstract class Account {
         Date interestDate = new Date();
         return (computeInterest(interestDate));
     }
-    private boolean checkDate(Date transactionDate,int month){
-        if((openDate.getMonth()-transactionDate.getMonth() > month || (openDate.getDate()-transactionDate.getDate() == month && (openDate.getDay()-transactionDate.getDay() > 0){
-            return true;
-        }
-        return false;
-    }
 }
 /*
  *  Derived class: CheckingAccount
@@ -138,42 +132,52 @@ class CheckingAccount extends Account implements FullFunctionalAccount {
  */
 class SavingAccount extends Account implements FullFunctionalAccount {
     int transactionFee = 0;
+    double transactionCountsInThisMonth = 0;
+    Date lastTransactionDate;
     SavingAccount(String s, double firstDeposit) {
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.12;
         openDate = new Date();
-        lastInterestDate = openDate;
+        lastInterestDate = lastTransactionDate = openDate;
+
     }
     SavingAccount(String s, double firstDeposit, Date firstDate) {
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.12;
         openDate = firstDate;
-        lastInterestDate = openDate;
+        lastInterestDate = lastTransactionDate  = openDate;
+    }
+    private boolean checkLastUseInSameMonth(Date transactionDate){
+        if(lastTransactionDate.getYear() == transactionDate.getYear() &&
+                lastTransactionDate.getMonth() == transactionDate.getMonth())
+            return true;
+        return false;
     }
     public double withdraw(double amount, Date withdrawDate) throws BankingException {
         int extraFee = 0;//use transaction extra fee if the first three per month
-        if(checkDate(withdrawDate, 3)) // if it is not
+        //check extra fee if this month already use 3 times.
+        if(!checkLastUseInSameMonth(withdrawDate))
+            transactionCountsInThisMonth = 0;
+        else if(transactionCountsInThisMonth > 3) // if it is not
             extraFee = 1;
         if ((accountBalance - amount - extraFee) < 0 ) {
             throw new BankingException("Underfraft from checking account name:" + accountName);
-        } else {
+        } else { //success
             accountBalance -= amount + extraFee;
+            lastTransactionDate = withdrawDate;
+            transactionCountsInThisMonth++;
             return (accountBalance);
         }
-
     }
     public double computeInterest(Date interestDate) throws BankingException {
         if (interestDate.before(lastInterestDate)) {
             throw new BankingException("Invalid date to compute interest for account name" + accountName);
         }
-
-        int numberOfDays = (int) ((interestDate.getTime()
-                - lastInterestDate.getTime())
-                / 86400000.0);
-        System.out.println("Number of days since last interest is " + numberOfDays);
-        double interestEarned = (double) numberOfDays / 365.0 * accountInterestRate * accountBalance;
+        int numberOfMonth = (lastInterestDate.getYear() - interestDate.getYear()) * 12 + (lastInterestDate.getMonth() - interestDate.getMonth())  ;
+        System.out.println("Number of Months since last interest is " + numberOfMonth);
+        double interestEarned = (double) numberOfMonth / 12 * accountInterestRate * accountBalance;
         System.out.println("Interest earned is " + interestEarned);
         lastInterestDate = interestDate;
         accountBalance += interestEarned;
