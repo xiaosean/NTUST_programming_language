@@ -1,5 +1,6 @@
 package hw1;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -46,6 +47,7 @@ public abstract class Account {
     protected double accountInterestRate;
     protected Date openDate;
     protected Date lastInterestDate;
+    protected String accountType;
 
     // public methods for every bank accounts
     public String name() {
@@ -56,9 +58,11 @@ public abstract class Account {
         return (accountBalance);
     }
 
+    abstract double deposit(double amount, Date withdrawDate) throws BankingException;
+
     public double deposit(double amount) throws BankingException {
-        accountBalance += amount;
-        return (accountBalance);
+        Date depositDate = new Date();
+        return (deposit(amount, depositDate));
     }
 
     abstract double withdraw(double amount, Date withdrawDate) throws BankingException;
@@ -85,21 +89,24 @@ public abstract class Account {
  */
 class CheckingAccount extends Account implements FullFunctionalAccount {
     CheckingAccount(String s, double firstDeposit) {
+        accountType = "CheckingAccount";
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.12;
-        openDate = new Date();
-        lastInterestDate = openDate;
+        lastInterestDate = openDate = new Date();
     }
 
     CheckingAccount(String s, double firstDeposit, Date firstDate) {
+        accountType = "CheckingAccount";
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.12;
-        openDate = firstDate;
-        lastInterestDate = openDate;
+        lastInterestDate = openDate = firstDate;
     }
-
+    public double deposit(double amount, Date depositDate) throws BankingException {
+        accountBalance += amount;
+        return (accountBalance);
+    }
     public double withdraw(double amount, Date withdrawDate) throws BankingException {
         // minimum balance is 1000, raise exception if violated
         if ((accountBalance - amount) < 1000) {
@@ -138,6 +145,7 @@ class SavingAccount extends Account implements FullFunctionalAccount {
     Date lastTransactionDate;
 
     SavingAccount(String s, double firstDeposit) {
+        accountType = "SavingAccount";
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.12;
@@ -147,6 +155,7 @@ class SavingAccount extends Account implements FullFunctionalAccount {
     }
 
     SavingAccount(String s, double firstDeposit, Date firstDate) {
+        accountType = "SavingAccount";
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.12;
@@ -158,8 +167,9 @@ class SavingAccount extends Account implements FullFunctionalAccount {
         int extraFee = 0;//use transaction extra fee if the first three per month
         if (!checkLastUseInSameMonth(depositDate))
             transactionCountsInThisMonth = 0;
-        else if (transactionCountsInThisMonth > 3) // if it is not
+        else if (transactionCountsInThisMonth >= 2) // if it is not
             extraFee = 1;
+        System.out.println("This month transaction already count (exclude this time) => " + transactionCountsInThisMonth);
         accountBalance += amount - extraFee;
         lastTransactionDate = depositDate;
         transactionCountsInThisMonth++;
@@ -167,6 +177,8 @@ class SavingAccount extends Account implements FullFunctionalAccount {
     }
 
     private boolean checkLastUseInSameMonth(Date transactionDate) {
+        System.out.println("Last transaction date:" +  lastInterestDate.toString());
+        System.out.println("This transaction date:" +  transactionDate.toString());
         if (lastTransactionDate.getYear() == transactionDate.getYear() &&
                 lastTransactionDate.getMonth() == transactionDate.getMonth())
             return true;
@@ -178,8 +190,9 @@ class SavingAccount extends Account implements FullFunctionalAccount {
         //check extra fee if this month already use 3 times.
         if (!checkLastUseInSameMonth(withdrawDate))
             transactionCountsInThisMonth = 0;
-        else if (transactionCountsInThisMonth > 3) // if it is not
+        else if (transactionCountsInThisMonth >= 3) // if it is not
             extraFee = 1;
+        System.out.println("This month transaction count  (exclude this time) => " + transactionCountsInThisMonth);
         if ((accountBalance - amount - extraFee) < 0) {
             throw new BankingException("Underfraft from checking account name:" + accountName);
         } else { //success
@@ -212,31 +225,33 @@ class SavingAccount extends Account implements FullFunctionalAccount {
 the first three per month are free; no minimum balance.
 */
 class CDAccount extends Account implements FullFunctionalAccount {
-    Date expiredDate;// next year
+    Calendar expiredDate = Calendar.getInstance();
+
 
     CDAccount(String s, double firstDeposit) {
+        accountType = "CDAccount";
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.3;
-        openDate = new Date();
-        expiredDate = openDate;
-        expiredDate.setYear(expiredDate.getYear() + 1);//next year same time
-
+        lastInterestDate = openDate = new Date();
+        expiredDate.setTime(lastInterestDate);
+        expiredDate.add(Calendar.YEAR,1);
     }
 
     CDAccount(String s, double firstDeposit, Date firstDate) {
+        accountType = "CDAccount";
         accountName = s;
         accountBalance = firstDeposit;
         accountInterestRate = 0.3;
-        openDate = firstDate;
-        expiredDate = openDate;
-        expiredDate.setYear(expiredDate.getYear() + 1);//next year same time
+        lastInterestDate = openDate = firstDate;
+        expiredDate.setTime(lastInterestDate);
+        expiredDate.add(Calendar.YEAR,1);
     }
 
     public double withdraw(double amount, Date withdrawDate) throws BankingException {
         int extraFee = 0;//use transaction extra fee if it isn's pass 1 year
         //check extra fee
-        if (!withdrawDate.after(expiredDate))
+        if (!withdrawDate.after(expiredDate.getTime()))
             extraFee = 250;
         if ((accountBalance - amount - extraFee) < 0) {
             throw new BankingException("Underfraft from checking account name:" + accountName);
@@ -248,10 +263,10 @@ class CDAccount extends Account implements FullFunctionalAccount {
 
     public double computeInterest(Date interestDate) throws BankingException {
         if (interestDate.before(lastInterestDate)) {
-            throw new BankingException("Invalid date to compute interest for account name" + accountName);
+            throw new BankingException("Invalid date to compute interest for account name:" + accountName);
         }
         double interestEarned = 0;
-        if (interestDate.after(expiredDate))
+        if (interestDate.after(expiredDate.getTime()))
             interestEarned = accountInterestRate * accountBalance;
         System.out.println("Interest earned is " + interestEarned);
         lastInterestDate = interestDate;
@@ -261,5 +276,59 @@ class CDAccount extends Account implements FullFunctionalAccount {
 
     public double deposit(double amount, Date depositDate) throws BankingException {
         throw new BankingException("Invalid  to deposit  for account name" + accountName);
+    }
+}
+/*
+ *  Derived class: CDAccount
+ *
+ *  Description:
+ *     like a saving account, but the balance is "negative" (you owe
+  the bank money, so a deposit will reduce the amount of the loan);
+  you can't withdraw (i.e., loan more money) but of course you can
+  deposit (i.e., pay off part of the loan).
+*/
+class LoanAccount extends Account implements FullFunctionalAccount {
+
+    LoanAccount(String s, double firstDeposit) {
+        accountType = "LoanAccount";
+        accountName = s;
+        accountBalance = firstDeposit;
+        accountInterestRate = 0.12;
+        openDate = new Date();
+        lastInterestDate = openDate;
+    }
+
+    LoanAccount(String s, double firstDeposit, Date firstDate) {
+        accountType = "LoanAccount";
+        accountName = s;
+        accountBalance = firstDeposit;
+        accountInterestRate = 0.12;
+        lastInterestDate = openDate = firstDate;
+    }
+
+    public double withdraw(double amount, Date withdrawDate) throws BankingException {
+        //check extra fee
+        if ((accountBalance - amount) < 0) {
+            throw new BankingException("Underfraft from checking account name:" + accountName);
+        } else { //success
+            accountBalance -= amount;
+            return (accountBalance);
+        }
+    }
+
+    public double computeInterest(Date interestDate) throws BankingException {
+        if (interestDate.before(lastInterestDate)) {
+            throw new BankingException("Invalid date to compute interest for account name" + accountName);
+        }
+        double interestEarned = 0;
+        System.out.println("Interest earned is -" + interestEarned);
+        lastInterestDate = interestDate;
+        accountBalance -= interestEarned;
+        return (accountBalance);
+    }
+
+    public double deposit(double amount, Date depositDate) throws BankingException {
+        accountBalance += amount;
+        return (accountBalance);
     }
 }
