@@ -34,7 +34,7 @@ public class Application {
         double ret;
         Date now = new Date();
         currentTestAccount = accountList[0];
-//        System.out.println("Checking Account Withdraw $500");
+        System.out.println("從Checking Account領出$500");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $500.0");
@@ -44,7 +44,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
 
-//        System.out.println("Checking Account  Withdraw $1");
+        System.out.println("從Checking Account再領出$1");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $1.0");
@@ -54,7 +54,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
 
-//        System.out.println("deposit $500 to Checking Account");
+        System.out.println("存$500到Checking Account");
         try {
             System.out.println("Deposit Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now deposits $500.0");
@@ -64,7 +64,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
         currentTestAccount = accountList[1];
-//        System.out.println("Saving Account Withdraw $100 (This month count -> 1)");
+        System.out.println("從Saving Account領出$100 (This month count -> 1)");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $100.0");
@@ -74,7 +74,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
 
-//        System.out.println("Saving Account Withdraw $100 (This month count -> 2)");
+        System.out.println("從Saving Account領出$100 (This month count -> 2)");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $100.0");
@@ -84,7 +84,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
 
-//        System.out.println("Saving Account Withdraw $100 (This month count -> 3)");
+        System.out.println("從Saving Account領出$100 (This month count -> 3)");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $100.0");
@@ -94,7 +94,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
 
-//        System.out.println("Saving Account Withdraw $100 (This month count -> 4)");
+        System.out.println("從Saving Account領出$100 (This month count -> 4)");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $100.0");
@@ -103,7 +103,7 @@ public class Application {
         } catch (Exception e) {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
-//        System.out.println("Saving Account Withdraw $100 (This month count -> 5)");
+        System.out.println("從Saving Account領出$100 (This month count -> 5)");
         try {
             System.out.println("Withdraw Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now withdraws $100.0");
@@ -112,7 +112,7 @@ public class Application {
         } catch (Exception e) {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
-//        System.out.println("Saving Account Deposit $1000 (This month count -> 6)");
+        System.out.println("從Saving Account存進$1000 (This month count -> 6)");
         try {
             System.out.println("Deposit Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now deposit(1000)");
@@ -122,7 +122,7 @@ public class Application {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
         currentTestAccount = accountList[2];
-//        System.out.println("CD Account Deposit $1000 ");
+        System.out.println("從CD Account存進$1000 ");
         try {
             System.out.println("Deposit Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now deposit(1000)");
@@ -131,7 +131,7 @@ public class Application {
         } catch (Exception e) {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
-//        System.out.println("CD Account check interest");
+        System.out.println("從CD Account 一年後檢查利息");
         try {
             Calendar nextYear = Calendar.getInstance();
             nextYear.add(Calendar.YEAR, 1);
@@ -145,7 +145,7 @@ public class Application {
 
         currentTestAccount = accountList[3];
 
-//        System.out.println("Loan Account Deposit $1000 ");
+        System.out.println("從Loan Account存進$1000 ");
         try {
             System.out.println("Deposit Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now deposit(1000)");
@@ -154,7 +154,7 @@ public class Application {
         } catch (Exception e) {
             stdExceptionPrinting(e, currentTestAccount.balance());
         }
-//        System.out.println("Loan Account withdraw$1000 ");
+        System.out.println("從Loan Account提款$1000 ");
         try {
             System.out.println("Deposit Date: " + now);
             System.out.println("Account <" + currentTestAccount.name() + "> now deposit(1000)");

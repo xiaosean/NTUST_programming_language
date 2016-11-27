@@ -1,7 +1,13 @@
 # NTUST_programming_language
 HW1:
 IDE:Intellij
-SDK:1.8 java version "1.8.0_102"
+SDK:1.8 
+java version "1.8.0_102"
+    path : programming_coding_hw\programming_hw1\src
+    To compile: %> javac ./hw1/Application.java
+    
+    To execute: %> java hw1/Application
+
 
 Description
 ----
